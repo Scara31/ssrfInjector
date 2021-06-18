@@ -1,5 +1,5 @@
 # ssrfInjector
-A reliable and fast scanner to find Blind SSRF or Host Header Injection vulnerabilities
+A thorough and reliable scanner to find Blind SSRF or Host Header Injection vulnerabilities
 ### Installation:
 ```
 wget https://raw.githubusercontent.com/Scara31/ssrfInjector/main/ssrfInjector.py
