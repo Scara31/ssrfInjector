@@ -169,7 +169,6 @@ def processTheTarget(target, protocol, injection, moreHeaders, debug):
 		for i in range(6):
 
 			r = getResponse(session, target, protocol, "head", i, injection, debug)
-			print()
 
 			if type(r) != str: # it means that there is no error
 				#response = f"\nPayload number: {i}\n\nStatus code: {r.status_code}\n\nResponse headers: {r.headers}\n"
@@ -177,7 +176,7 @@ def processTheTarget(target, protocol, injection, moreHeaders, debug):
 				report += response
 
 				if r.status_code == 200:
-					response = getResponse(target, protocol, "get", i, injection, debug)
+					response = getResponse(session, target, protocol, "get", i, injection, debug)
 					report += "\n"+response+"\n"
 
 			if type(r) == str: # it means that there is an error, because request object must be returned
@@ -209,10 +208,10 @@ def getResponse(session, target, protocol, method, payloadNum, injection, debug)
 
 		try:	
 			r = session.head(protocol+target, headers=payloadsList[payloadNum], timeout=2)
-			if r.status_code >= 200: status2xxList.append(target)
+			if r.status_code >= 200 and r.status_code < 300: status2xxList.append(target)
 			if r.status_code >= 500: status5xxList.append(target)
 
-			if debug: print(target, payloadsList[payloadNum], r)
+			if debug: print("HEAD:"+protocol+target, payloadsList[payloadNum], r)
 			return r
 		except Exception as exception:
 			response = f"Error {exception}, using payload: {payloadsList[payloadNum]}"
@@ -222,7 +221,7 @@ def getResponse(session, target, protocol, method, payloadNum, injection, debug)
 	if method == "get":
 		try:
 			r = session.get(protocol+target, headers=payloadsList[payloadNum], timeout=5)
-			if debug: print(target, payloadsList[payloadNum], r)
+			if debug: print("GET:"+protocol+target, payloadsList[payloadNum], r)
 
 			response = f"Content of the page {target}:\n\n{r.text}\n"
 			return response
