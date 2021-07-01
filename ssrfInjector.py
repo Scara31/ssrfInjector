@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 
 import requests, threading, time, sys
-from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def run():
@@ -142,12 +140,7 @@ def processTheTarget(target, protocol, injection, moreHeaders, debug):
 		perc += percShift
 		print(f'{round(perc, 3)}%', end="\r")
 
-
-	retry_strategy = Retry(total=2, backoff_factor=1)
-	adapter = HTTPAdapter(max_retries=retry_strategy)
 	session = requests.Session()
-	session.mount("https://", adapter)
-	session.mount("http://", adapter)
 
 	if moreHeaders:
 		report = f"Target: {protocol+target}, data:\n"
@@ -171,7 +164,6 @@ def processTheTarget(target, protocol, injection, moreHeaders, debug):
 			r = getResponse(session, target, protocol, "head", i, injection, debug)
 
 			if type(r) != str: # it means that there is no error
-				#response = f"\nPayload number: {i}\n\nStatus code: {r.status_code}\n\nResponse headers: {r.headers}\n"
 				response = f"\nPayload number: {i}\n\nStatus code: {r.status_code}\n\n"
 				report += response
 
@@ -214,7 +206,7 @@ def getResponse(session, target, protocol, method, payloadNum, injection, debug)
 			if debug: print("HEAD:"+protocol+target, payloadsList[payloadNum], r)
 			return r
 		except Exception as exception:
-			response = f"Error {exception}, using payload: {payloadsList[payloadNum]}"
+			response = f"Error {exception}, using payload {payloadNum}"
 			if debug: print(response+" on "+target)
 			return response
 
@@ -226,7 +218,7 @@ def getResponse(session, target, protocol, method, payloadNum, injection, debug)
 			response = f"Content of the page {target}:\n\n{r.text}\n"
 			return response
 		except Exception as exception:
-			response = f"Error {exception}, making a GET request, using payload: {payloadsList[payloadNum]}"
+			response = f"Error {exception}, making a GET request, using payload {payloadNum}"
 			if debug: print(response+"on "+target)
 			return response 
 
