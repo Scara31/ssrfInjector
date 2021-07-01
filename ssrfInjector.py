@@ -191,10 +191,10 @@ def getResponse(session, target, protocol, method, payloadNum, injection, debug)
 	payloadsList.append({"Host":target+"@"+injection}) #2
 	payloadsList.append({"Host":injection,"X-Forwarded-Host":target}) #3
 	payloadsList.append({"Host":target, "X-Forwarded-Host":injection}) #4
-	payloadsList.append({"Host":target, "X-Forwarded-Host":target+"@"+injection}) #5
+	payloadsList.append({"Host":target, "X-Forwarded-Host":target+"@"+injection, "Connection":"close"}) #5
 	payloadsList.append({"Host":injection, "Cache-Control":"no-transform", "User-Agent":injection, #6
 			"Referer":injection, "X-Forwarded-Host":injection, "X-Forwarded-For": injection,
-			"Origin":injection})
+			"Origin":injection,"Connection":"close"})
 
 	if method == "head":
 
